@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
 import { createServer } from "node:http";
-import { once } from "node:events";
+import { setTimeout as delay } from "node:timers/promises";
 import test from "node:test";
-import { createRateLimiter, createRequestHandler } from "../src/server.js";
+import { createRateLimiter, createRequestHandler, startServer } from "../src/server.js";
 
 test("GET /api/health returns service status", async () => {
   const server = await startTestServer();
@@ -140,19 +140,94 @@ test("createRateLimiter blocks requests beyond the configured max", () => {
   assert.equal(limiter("client", 1200).allowed, true);
 });
 
+test("startServer reports port conflicts without an unhandled EventEmitter crash", async () => {
+  const occupiedServer = createServer();
+  await listenOnRandomPort(occupiedServer);
+  const occupiedAddress = occupiedServer.address();
+
+  let resolveLog;
+  const logWritten = new Promise((resolve) => {
+    resolveLog = resolve;
+  });
+  const failedServer = startServer({
+    port: occupiedAddress.port,
+    host: "127.0.0.1",
+    exitOnError: false,
+    logger: {
+      log: () => {},
+      error: (event, details) => resolveLog({ event, details })
+    }
+  });
+
+  try {
+    const { event, details } = await Promise.race([
+      logWritten,
+      delay(1000).then(() => {
+        throw new Error("Timed out waiting for startup error log");
+      })
+    ]);
+
+    assert.equal(event, "server_start_failed");
+    assert.equal(details.code, "EADDRINUSE");
+    assert.match(details.message, /already in use/);
+    assert.equal(details.host, "127.0.0.1");
+    assert.equal(details.port, occupiedAddress.port);
+    assert.equal(Object.hasOwn(details, "stack"), false);
+  } finally {
+    await closeServer(failedServer);
+    await closeServer(occupiedServer);
+  }
+});
+
 async function startTestServer(options = {}) {
   const server = createServer(createRequestHandler(options));
-  server.listen(0, "127.0.0.1");
-  await once(server, "listening");
+  await listenOnRandomPort(server);
   const address = server.address();
 
   return {
     url: `http://127.0.0.1:${address.port}`,
     close: async () => {
-      server.close();
-      await once(server, "close");
+      await closeServer(server);
     }
   };
+}
+
+async function listenOnRandomPort(server) {
+  await new Promise((resolve, reject) => {
+    const cleanup = () => {
+      server.off("error", onError);
+      server.off("listening", onListening);
+    };
+    const onError = (error) => {
+      cleanup();
+      reject(error);
+    };
+    const onListening = () => {
+      cleanup();
+      resolve();
+    };
+
+    server.once("error", onError);
+    server.once("listening", onListening);
+    server.listen(0, "127.0.0.1");
+  });
+}
+
+async function closeServer(server) {
+  if (!server.listening) {
+    return;
+  }
+
+  await new Promise((resolve, reject) => {
+    server.close((error) => {
+      if (error) {
+        reject(error);
+        return;
+      }
+
+      resolve();
+    });
+  });
 }
 
 function createMockFetch(responses) {

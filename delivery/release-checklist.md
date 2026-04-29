@@ -8,6 +8,7 @@ Date: 2026-04-29
 - [x] `npm.cmd run check` passes.
 - [x] Local smoke check of `/api/health` passes.
 - [x] Local smoke check of `/api/weather?city=Seattle&units=imperial` passes with approved network access.
+- [x] Startup port-conflict regression reports `EADDRINUSE` without an unhandled Node `events` crash.
 - [x] Frontend assets are served by the same Node server at `/`.
 - [x] Delivery docs are current.
 
@@ -15,7 +16,7 @@ Date: 2026-04-29
 
 - No API key is required for Open-Meteo.
 - Optional environment variables:
-  - `PORT`: server port, default `3000`.
+  - `PORT`: server port, default `3001`.
   - `HOST`: bind host, default `0.0.0.0`.
   - `WEATHER_TIMEOUT_MS`: provider timeout, default `6000`.
   - `RATE_LIMIT_WINDOW_MS`: rate-limit window, default `60000`.
@@ -23,8 +24,8 @@ Date: 2026-04-29
 
 ## Smoke Checks
 
-- `curl http://localhost:3000/api/health`
-- `curl "http://localhost:3000/api/weather?city=Seattle&units=imperial"`
+- `curl http://localhost:3001/api/health`
+- `curl "http://localhost:3001/api/weather?city=Seattle&units=imperial"`
 - Browser search for `Seattle`.
 
 ## Rollback Triggers
