@@ -1,5 +1,5 @@
 # Didactic Waddle
-
+## Weather by City application using AI SDLC tool using OpenAI's Codex. 
 A dependency-free Node.js full-stack weather app. Users enter a city, the backend resolves it with Open-Meteo geocoding, fetches current weather and day-planning details, and the frontend renders a responsive dashboard.
 
 ## Run Locally
