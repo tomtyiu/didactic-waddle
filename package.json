@@ -1,0 +1,16 @@
+{
+  "name": "didactic-waddle",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Full-stack city weather app with a Node backend and static frontend.",
+  "scripts": {
+    "start": "node src/server.js",
+    "test": "node --test --experimental-test-isolation=none test\\weatherService.test.js test\\server.test.js",
+    "check": "node --check src/server.js && node --check src/weatherService.js && node --check public/app.js && node --check test/weatherService.test.js && node --check test/server.test.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "license": "Apache-2.0"
+}

@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>City Weather</title>
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="search-panel" aria-labelledby="app-title">
+        <div class="title-block">
+          <p class="eyebrow">Live city forecast</p>
+          <h1 id="app-title">City Weather</h1>
+        </div>
+
+        <form id="weather-form" class="weather-form">
+          <label class="field-label" for="city-input">City</label>
+          <div class="search-row">
+            <input id="city-input" name="city" type="search" autocomplete="address-level2" placeholder="Seattle" maxlength="80" required>
+            <button type="submit">Search</button>
+          </div>
+
+          <div class="control-row">
+            <label class="select-label" for="units-select">
+              Units
+              <select id="units-select" name="units">
+                <option value="imperial">Imperial</option>
+                <option value="metric">Metric</option>
+              </select>
+            </label>
+            <button id="refresh-button" type="button" disabled>Refresh</button>
+          </div>
+        </form>
+      </section>
+
+      <section id="status" class="status is-idle" role="status" aria-live="polite">
+        Enter a city to load current weather.
+      </section>
+
+      <section id="weather-dashboard" class="weather-dashboard" hidden>
+        <div class="current-layout">
+          <div class="condition-visual" id="condition-visual" aria-hidden="true"></div>
+          <div class="current-summary">
+            <p id="location-name" class="location-name"></p>
+            <p id="condition-text" class="condition-text"></p>
+            <p id="current-temp" class="current-temp"></p>
+            <p id="feels-like" class="supporting-text"></p>
+          </div>
+        </div>
+
+        <div class="planning-grid" aria-label="Weather details">
+          <div class="metric-tile">
+            <span>Humidity</span>
+            <strong id="humidity"></strong>
+          </div>
+          <div class="metric-tile">
+            <span>Wind</span>
+            <strong id="wind"></strong>
+          </div>
+          <div class="metric-tile">
+            <span>Rain now</span>
+            <strong id="precipitation"></strong>
+          </div>
+          <div class="metric-tile">
+            <span>Cloud cover</span>
+            <strong id="cloud-cover"></strong>
+          </div>
+          <div class="metric-tile">
+            <span>Pressure</span>
+            <strong id="pressure"></strong>
+          </div>
+          <div class="metric-tile">
+            <span>Gusts</span>
+            <strong id="gusts"></strong>
+          </div>
+        </div>
+
+        <div class="day-strip" aria-label="Today">
+          <div>
+            <span>High</span>
+            <strong id="daily-high"></strong>
+          </div>
+          <div>
+            <span>Low</span>
+            <strong id="daily-low"></strong>
+          </div>
+          <div>
+            <span>Rain chance</span>
+            <strong id="rain-chance"></strong>
+          </div>
+          <div>
+            <span>Sunrise</span>
+            <strong id="sunrise"></strong>
+          </div>
+          <div>
+            <span>Sunset</span>
+            <strong id="sunset"></strong>
+          </div>
+        </div>
+
+        <footer class="data-footer">
+          <span id="updated-at"></span>
+          <a href="https://open-meteo.com/" rel="noreferrer" target="_blank">Weather data by Open-Meteo</a>
+        </footer>
+      </section>
+    </main>
+
+    <script src="/app.js" type="module"></script>
+  </body>
+</html>
