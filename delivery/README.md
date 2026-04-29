@@ -1,6 +1,6 @@
 # Delivery Notes
 
-Current focus: deliver a full-stack real-time weather app for city-based day planning.
+Current focus: improve the city weather app UI so the first screen and loaded dashboard read as a polished, production-ready product while preserving the existing weather API and browser workflow.
 
 Artifacts:
 

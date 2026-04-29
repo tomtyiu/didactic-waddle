@@ -63,3 +63,35 @@ Enable a user to enter a city and view current weather details quickly enough to
 - Unit switching changes displayed unit labels and calls the backend with the selected unit system.
 - Automated tests cover validation and API success/error paths using mocked fetch calls.
 - Automated tests cover port-conflict startup handling so the service reports `EADDRINUSE` cleanly.
+- Automated tests cover server entrypoint detection so `npm.cmd start` does not silently exit in sandboxed or symlinked workspaces.
+
+## UI Professionalization Requirements
+
+Functional:
+
+- The first screen must present the city search as the primary task without a marketing landing page.
+- The user must be able to search, refresh, and switch units from a clear command area.
+- Loaded weather must emphasize location, condition, current temperature, and apparent temperature before secondary metrics.
+- Status messages must distinguish idle, loading, success, and error states visually and through `role="status"`.
+- The refresh control must remain unavailable until there is a successful city to refresh.
+
+Non-functional:
+
+- The UI must be responsive from narrow mobile widths through desktop without overlapping text or controls.
+- Text in buttons, metric tiles, and dashboard panels must wrap or constrain safely.
+- The palette must use restrained neutral surfaces with multiple supporting accents rather than a single-hue theme.
+- The implementation must remain dependency-free and compatible with the existing static asset server.
+
+Security and privacy:
+
+- The frontend must keep using `URLSearchParams` for API requests.
+- Local storage remains limited to the last successful city and unit preference.
+- No secrets, precise user location collection, analytics, or third-party UI scripts are introduced.
+
+UI acceptance criteria:
+
+- `/` serves a polished weather app shell with accessible labels for city input, units, search, and refresh.
+- A successful weather response renders the dashboard without changing the `/api/weather` contract.
+- Loading, success, and error status classes are applied consistently.
+- `npm.cmd run check` validates the updated browser script syntax.
+- `npm.cmd test` confirms backend behavior remains unchanged.

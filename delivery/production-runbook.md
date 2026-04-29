@@ -21,6 +21,14 @@ $env:RATE_LIMIT_MAX = "60"
 npm.cmd start
 ```
 
+If the default port is occupied during local review, bind to loopback with an alternate port:
+
+```powershell
+$env:HOST = "127.0.0.1"
+$env:PORT = "3101"
+npm.cmd start
+```
+
 ## Health Checks
 
 ```powershell

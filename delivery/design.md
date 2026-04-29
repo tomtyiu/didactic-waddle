@@ -52,3 +52,31 @@ Rollout is a standard application release after tests and smoke checks pass. Rol
 ## Observability
 
 Server logs startup and provider lookup failures with sanitized city context. Operators can use `/api/health`, browser behavior, and server logs for immediate diagnosis.
+
+## UI Professionalization Design Addendum
+
+Request date: 2026-04-29
+
+Frontend responsibilities:
+
+- `public/index.html` now separates the command panel, status region, current condition panel, current detail metrics, and daily detail metrics with accessible section labels.
+- `public/styles.css` owns the visual hierarchy: neutral page chrome, restrained accent colors, segmented unit control, status tones, durable card sizing, and mobile breakpoints.
+- `public/app.js` preserves the existing API workflow while adapting unit selection from a native select to radio-backed segmented controls.
+
+State handling:
+
+- Unit preference remains stored under `didactic-waddle.units`.
+- Last successful city remains stored under `didactic-waddle.city`.
+- `setStatus` maps idle, loading, success, and error tones to explicit CSS classes while continuing to write messages with `textContent`.
+- `setBusy` disables city input, search, refresh, and unit radios during in-flight requests and exposes `aria-busy` on the form and dashboard.
+
+Security and privacy:
+
+- No new external scripts, analytics, precise location capture, credentials, or third-party assets were introduced.
+- API requests still use `URLSearchParams`.
+- The only `innerHTML` path remains the existing internal weather-icon renderer, based on normalized weather codes rather than untrusted HTML.
+
+Startup fix:
+
+- `src/server.js` now uses a realpath-normalized direct-run check so `npm.cmd start` correctly starts the server from the sandboxed workspace path.
+- `test/server.test.js` covers the direct-run predicate to prevent the entrypoint from silently exiting again.
