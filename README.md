@@ -8,7 +8,7 @@ A dependency-free Node.js full-stack weather app. Users enter a city, the backen
 npm.cmd start
 ```
 
-Open `http://localhost:3000`.
+Open `http://localhost:3001`.
 
 ## Test
 
@@ -26,7 +26,7 @@ npm.cmd run check
 
 ## Configuration
 
-- `PORT`: server port, default `3000`.
+- `PORT`: server port, default `3001`.
 - `HOST`: bind host, default `0.0.0.0`.
 - `WEATHER_TIMEOUT_MS`: Open-Meteo timeout, default `6000`.
 - `RATE_LIMIT_WINDOW_MS`: rate-limit window, default `60000`.

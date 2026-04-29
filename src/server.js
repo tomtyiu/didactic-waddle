@@ -6,7 +6,7 @@ import { fetchWeatherForCity, WeatherServiceError } from "./weatherService.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const PUBLIC_DIR = join(__dirname, "..", "public");
-const DEFAULT_PORT = 3000;
+const DEFAULT_PORT = 3001;
 const DEFAULT_HOST = "0.0.0.0";
 const DEFAULT_RATE_LIMIT_WINDOW_MS = 60000;
 const DEFAULT_RATE_LIMIT_MAX = 60;
@@ -100,13 +100,41 @@ export function createRateLimiter(options = {}) {
 export function startServer(options = {}) {
   const port = readPositiveInteger(options.port ?? process.env.PORT, DEFAULT_PORT);
   const host = options.host ?? process.env.HOST ?? DEFAULT_HOST;
+  const logger = options.logger ?? console;
+  const exitOnError = options.exitOnError ?? true;
   const server = createServer(createRequestHandler(options));
 
+  server.on("error", (error) => {
+    logger.error?.("server_start_failed", buildStartupErrorDetails(error, { host, port }));
+
+    if (exitOnError) {
+      process.exitCode = 1;
+    }
+  });
+
   server.listen(port, host, () => {
-    console.log(`Weather app listening on http://${host}:${port}`);
+    logger.log?.(`Weather app listening on http://${host}:${port}`);
   });
 
   return server;
+}
+
+function buildStartupErrorDetails(error, { host, port }) {
+  const code = typeof error?.code === "string" ? error.code : "SERVER_ERROR";
+  const message = code === "EADDRINUSE"
+    ? `Port ${port} is already in use on ${host}. Stop the conflicting process or set PORT to an available port.`
+    : `Server failed to start: ${getSafeErrorMessage(error)}`;
+
+  return {
+    code,
+    message,
+    host,
+    port
+  };
+}
+
+function getSafeErrorMessage(error) {
+  return typeof error?.message === "string" && error.message ? error.message : "unknown error";
 }
 
 async function serveStatic(pathname, response) {

@@ -41,6 +41,7 @@ Enable a user to enter a city and view current weather details quickly enough to
 
 ## Reliability and Failure Requirements
 
+- Startup listen failures, including a port already in use, must be handled with a clear diagnostic instead of an unhandled Node `events` crash.
 - Empty, malformed, or too-long city values return `400`.
 - Missing city matches return `404`.
 - External timeout or provider failure returns `502` with a safe client message.
@@ -50,6 +51,7 @@ Enable a user to enter a city and view current weather details quickly enough to
 ## Observability Requirements
 
 - Backend logs startup and weather lookup failures without logging secrets.
+- Startup failure logs include the event name, code, host, port, and safe message without stack traces.
 - Health endpoint returns process uptime and status.
 - Frontend shows when the data was last fetched.
 
@@ -60,3 +62,4 @@ Enable a user to enter a city and view current weather details quickly enough to
 - Frontend search renders weather details and resolved location.
 - Unit switching changes displayed unit labels and calls the backend with the selected unit system.
 - Automated tests cover validation and API success/error paths using mocked fetch calls.
+- Automated tests cover port-conflict startup handling so the service reports `EADDRINUSE` cleanly.
