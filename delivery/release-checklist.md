@@ -48,3 +48,12 @@ Date: 2026-04-29
 - Confirm at least one city lookup returns current data.
 - Confirm frontend error states are not showing for common city searches.
 - Inspect logs for provider failures, rate-limit spikes, and unexpected stack traces.
+
+## UI Professionalization Release Notes
+
+- No migrations, new secrets, or feature flags are required.
+- Release gate: updated static assets must pass `npm.cmd run check`, `npm.cmd test`, and local static asset smoke checks. These gates passed on 2026-04-29 with 15 tests.
+- Rollback remains redeploying the previous commit or reverting the UI asset changes.
+- Post-release verification should include a desktop and mobile viewport check for the search controls, loaded dashboard, and error status.
+- Manual browser verification remains required before production deployment because local browser automation was blocked or timed out in this session.
+- Local review server is currently available at `http://127.0.0.1:3101`; stop PID `14388` after review if it is no longer needed.

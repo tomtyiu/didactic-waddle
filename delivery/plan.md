@@ -44,3 +44,30 @@ As a user, I want to view real-time weather data for my city so that I can plan 
 - Local smoke check can load the frontend and return weather JSON for a representative city.
 - Delivery docs describe validation, release, rollback, and residual risks.
 - Branch is pushed and a PR is created.
+
+## UI Professionalization Addendum
+
+Request date: 2026-04-29
+
+Target outcome: improve the existing browser UI without changing the backend API contract, storage keys, or provider integration.
+
+Scope:
+
+- Refine `public/index.html`, `public/styles.css`, and narrowly related frontend behavior in `public/app.js`.
+- Improve visual hierarchy, spacing, responsive layout, form controls, status states, and weather dashboard presentation.
+- Preserve current search, refresh, unit preference, local storage, and error-handling behavior.
+
+Non-goals:
+
+- No backend weather contract changes.
+- No new runtime dependencies or external UI asset downloads.
+- No authentication, saved accounts, maps, alerts, or long-range forecast expansion.
+
+Execution steps:
+
+1. Capture UI-specific requirements and validation expectations.
+2. Update the static markup for a more professional app shell and accessible controls.
+3. Rework CSS for a polished responsive dashboard, stronger hierarchy, and durable text fitting.
+4. Adjust frontend JavaScript only where markup and state classes require it.
+5. Run syntax checks, automated tests, and local smoke checks.
+6. Update delivery docs with validation evidence and release notes.

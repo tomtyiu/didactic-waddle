@@ -1,7 +1,8 @@
 import { createServer } from "node:http";
+import { realpathSync } from "node:fs";
 import { readFile } from "node:fs/promises";
-import { dirname, extname, join, normalize, sep } from "node:path";
-import { fileURLToPath, pathToFileURL } from "node:url";
+import { dirname, extname, join, normalize, resolve, sep } from "node:path";
+import { fileURLToPath } from "node:url";
 import { fetchWeatherForCity, WeatherServiceError } from "./weatherService.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -226,6 +227,18 @@ function readPositiveInteger(value, fallback) {
   return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
 }
 
-if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+if (isDirectRun(process.argv)) {
   startServer();
+}
+
+export function isDirectRun(argv) {
+  if (!argv[1]) {
+    return false;
+  }
+
+  try {
+    return realpathSync.native(resolve(argv[1])) === realpathSync.native(fileURLToPath(import.meta.url));
+  } catch {
+    return false;
+  }
 }

@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { createServer } from "node:http";
 import { setTimeout as delay } from "node:timers/promises";
 import test from "node:test";
-import { createRateLimiter, createRequestHandler, startServer } from "../src/server.js";
+import { createRateLimiter, createRequestHandler, isDirectRun, startServer } from "../src/server.js";
 
 test("GET /api/health returns service status", async () => {
   const server = await startTestServer();
@@ -177,6 +177,11 @@ test("startServer reports port conflicts without an unhandled EventEmitter crash
     await closeServer(failedServer);
     await closeServer(occupiedServer);
   }
+});
+
+test("isDirectRun identifies the server entrypoint", () => {
+  assert.equal(isDirectRun(["node", "src/server.js"]), true);
+  assert.equal(isDirectRun(["node", "test/server.test.js"]), false);
 });
 
 async function startTestServer(options = {}) {

@@ -1,7 +1,8 @@
 const form = document.querySelector("#weather-form");
 const cityInput = document.querySelector("#city-input");
-const unitsSelect = document.querySelector("#units-select");
+const unitInputs = [...document.querySelectorAll("input[name='units']")];
 const refreshButton = document.querySelector("#refresh-button");
+const searchButton = form.querySelector("button[type='submit']");
 const statusEl = document.querySelector("#status");
 const dashboard = document.querySelector("#weather-dashboard");
 
@@ -38,7 +39,7 @@ const state = {
 };
 
 cityInput.value = state.lastCity;
-unitsSelect.value = state.units === "metric" ? "metric" : "imperial";
+setSelectedUnits(state.units);
 
 form.addEventListener("submit", (event) => {
   event.preventDefault();
@@ -49,13 +50,19 @@ refreshButton.addEventListener("click", () => {
   loadWeather(state.lastCity || cityInput.value, { reason: "refresh" });
 });
 
-unitsSelect.addEventListener("change", () => {
-  state.units = unitsSelect.value;
-  savePreference(STORAGE_KEYS.units, state.units);
+unitInputs.forEach((input) => {
+  input.addEventListener("change", () => {
+    if (!input.checked) {
+      return;
+    }
 
-  if (state.lastCity) {
-    loadWeather(state.lastCity, { reason: "units" });
-  }
+    state.units = getSelectedUnits();
+    savePreference(STORAGE_KEYS.units, state.units);
+
+    if (state.lastCity) {
+      loadWeather(state.lastCity, { reason: "units" });
+    }
+  });
 });
 
 if (state.lastCity) {
@@ -81,7 +88,7 @@ async function loadWeather(city, options = {}) {
   try {
     const params = new URLSearchParams({
       city: normalizedCity,
-      units: unitsSelect.value
+      units: getSelectedUnits()
     });
     const response = await fetch(`/api/weather?${params.toString()}`, {
       signal: state.currentController.signal,
@@ -96,7 +103,7 @@ async function loadWeather(city, options = {}) {
     }
 
     state.lastCity = normalizedCity;
-    state.units = unitsSelect.value;
+    state.units = getSelectedUnits();
     savePreference(STORAGE_KEYS.city, normalizedCity);
     savePreference(STORAGE_KEYS.units, state.units);
 
@@ -140,15 +147,32 @@ function renderWeather(data) {
 }
 
 function setBusy(isBusy) {
-  form.querySelector("button[type='submit']").disabled = isBusy;
+  form.setAttribute("aria-busy", String(isBusy));
+  dashboard.setAttribute("aria-busy", String(isBusy));
+  searchButton.disabled = isBusy;
   refreshButton.disabled = isBusy || !state.lastCity;
   cityInput.disabled = isBusy;
-  unitsSelect.disabled = isBusy;
+  unitInputs.forEach((input) => {
+    input.disabled = isBusy;
+  });
 }
 
 function setStatus(message, tone) {
+  const normalizedTone = ["loading", "success", "error"].includes(tone) ? tone : "idle";
   statusEl.textContent = message;
-  statusEl.className = `status ${tone === "error" ? "is-error" : "is-idle"}`;
+  statusEl.className = `status is-${normalizedTone}`;
+}
+
+function getSelectedUnits() {
+  const selected = unitInputs.find((input) => input.checked)?.value;
+  return selected === "metric" ? "metric" : "imperial";
+}
+
+function setSelectedUnits(value) {
+  const normalized = value === "metric" ? "metric" : "imperial";
+  unitInputs.forEach((input) => {
+    input.checked = input.value === normalized;
+  });
 }
 
 function scheduleRefresh() {
