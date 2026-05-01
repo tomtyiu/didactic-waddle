@@ -72,18 +72,22 @@ if (state.lastCity) {
 async function loadWeather(city, options = {}) {
   const normalizedCity = city.trim();
 
+  state.currentController?.abort();
+
   if (normalizedCity.length < 2) {
+    state.currentController = null;
+    setBusy(false);
     setStatus("Enter at least two characters for the city.", "error");
     return;
   }
 
-  state.currentController?.abort();
-  state.currentController = new AbortController();
+  const controller = new AbortController();
+  state.currentController = controller;
 
   setBusy(true);
   setStatus(options.reason === "refresh" ? "Refreshing weather..." : "Loading current weather...", "loading");
 
-  const timeout = setTimeout(() => state.currentController.abort(), 9000);
+  const timeout = setTimeout(() => controller.abort(), 9000);
 
   try {
     const params = new URLSearchParams({
@@ -91,7 +95,7 @@ async function loadWeather(city, options = {}) {
       units: getSelectedUnits()
     });
     const response = await fetch(`/api/weather?${params.toString()}`, {
-      signal: state.currentController.signal,
+      signal: controller.signal,
       headers: {
         "accept": "application/json"
       }
@@ -100,6 +104,10 @@ async function loadWeather(city, options = {}) {
 
     if (!response.ok) {
       throw new Error(payload?.error?.message ?? "Weather lookup failed.");
+    }
+
+    if (!isActiveRequest(controller)) {
+      return;
     }
 
     state.lastCity = normalizedCity;
@@ -111,6 +119,10 @@ async function loadWeather(city, options = {}) {
     scheduleRefresh();
     setStatus("Current weather loaded.", "success");
   } catch (error) {
+    if (!isActiveRequest(controller)) {
+      return;
+    }
+
     if (error.name === "AbortError") {
       setStatus("The weather request timed out. Try refreshing in a moment.", "error");
     } else {
@@ -118,7 +130,10 @@ async function loadWeather(city, options = {}) {
     }
   } finally {
     clearTimeout(timeout);
-    setBusy(false);
+    if (isActiveRequest(controller)) {
+      state.currentController = null;
+      setBusy(false);
+    }
   }
 }
 
@@ -182,6 +197,10 @@ function scheduleRefresh() {
       loadWeather(state.lastCity, { reason: "refresh" });
     }
   }, 10 * 60 * 1000);
+}
+
+function isActiveRequest(controller) {
+  return state.currentController === controller;
 }
 
 function formatValue(value, unit, options = {}) {

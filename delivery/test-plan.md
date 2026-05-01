@@ -6,6 +6,10 @@ Date: 2026-04-29
 
 - `npm.cmd test`: passed on 2026-04-29 with 15 Node unit, route, startup entrypoint, and startup failure tests.
 - `npm.cmd run check`: passed on 2026-04-29 for JavaScript source, public script, and tests.
+- `node --test --experimental-test-isolation=none test\frontend.test.js`: passed on 2026-05-01 for the rapid-search request lifecycle regression.
+- `npm.cmd run check`: passed on 2026-05-01 for server, weather service, browser script, and all test files including `test/frontend.test.js`.
+- `npm.cmd test`: passed on 2026-05-01 with 16 Node tests including the frontend regression.
+- Post-rebase validation initially failed on 2026-05-01 because `src/weatherService.js` had invalid `#` lines on `origin/main`; the fix restores valid forecast query statements and these checks must pass before release.
 
 ## Coverage Targets
 
@@ -13,9 +17,11 @@ Date: 2026-04-29
 - Unit validation defaults safely and accepts `imperial` or `metric`.
 - Weather-code mapping returns useful text.
 - Weather service handles geocoding success, no match, and provider failure.
+- Forecast URL construction includes `current` and `daily` Open-Meteo query fields.
 - API route returns normalized successful JSON with mocked provider calls.
 - API route returns bounded errors for invalid city and rate-limit cases.
 - Startup path logs `EADDRINUSE` port conflicts with structured details instead of throwing an unhandled EventEmitter error.
+- Frontend request lifecycle keeps active loading state intact when a previous request is aborted by a newer search.
 
 ## Manual Smoke Checks
 
@@ -32,6 +38,8 @@ Date: 2026-04-29
 - Frontend smoke passed on 2026-04-29: local server returned `200` for `/` with the expected `City Weather` document and `/app.js` script reference.
 - Real external provider check passed on 2026-04-29: local server returned `200` for `/api/health` and `200` for `/api/weather?city=Seattle&units=imperial` with source `Open-Meteo`.
 - Sandbox-only provider access initially returned `502`; rerunning with approved network access confirmed the product path works.
+- On 2026-05-01, sandboxed live provider access failed with `connect EACCES` to Open-Meteo, which confirms network containment rather than product failure.
+- On 2026-05-01, approved live runtime smoke returned `200` for `/api/health`, `200` for `/`, and `200` for `/api/weather?city=Seattle&units=imperial` with city `Seattle`, country `US`, and unit `°F`.
 
 ## Security-Focused Checks
 

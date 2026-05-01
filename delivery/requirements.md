@@ -95,3 +95,29 @@ UI acceptance criteria:
 - Loading, success, and error status classes are applied consistently.
 - `npm.cmd run check` validates the updated browser script syntax.
 - `npm.cmd test` confirms backend behavior remains unchanged.
+
+## Frontend Request Lifecycle Requirements
+
+Request date: 2026-05-01
+
+Functional:
+
+- Forecast URL construction must include the required `current` and `daily` Open-Meteo field lists using valid JavaScript statements.
+- Submitting a new city search must abort any in-flight weather request.
+- A superseded request must not update status text, render weather, or clear busy state for the active request.
+- The active request must remain able to render weather and restore controls when it completes.
+- Submitting invalid city input must stop any active request and show the validation error.
+
+Security and reliability:
+
+- The fix must keep using `AbortController` and `URLSearchParams`; no new external scripts or dependencies are introduced.
+- Provider and validation error messages must continue to render through `textContent`.
+- Existing backend input validation, rate limiting, and safe error responses remain unchanged.
+
+Acceptance criteria:
+
+- Syntax checks catch invalid JavaScript in `src/weatherService.js`.
+- Existing weather service tests confirm `buildForecastUrl` includes documented forecast parameters.
+- A regression test proves rapid consecutive searches keep the UI busy for the second request after the first is aborted.
+- The full Node test suite passes with the new frontend regression included.
+- Runtime smoke checks for `/`, `/api/health`, and `/api/weather?city=Seattle&units=imperial` pass when provider network access is available.

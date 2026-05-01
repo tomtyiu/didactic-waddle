@@ -124,8 +124,8 @@ export function buildForecastUrl(location, units) {
   const url = new URL(FORECAST_URL);
   url.searchParams.set("latitude", String(location.latitude));
   url.searchParams.set("longitude", String(location.longitude));
-#  url.searchParams.set("current", CURRENT_FIELDS.join(","));
-#  url.searchParams.set("daily", DAILY_FIELDS.join(","));
+  url.searchParams.set("current", CURRENT_FIELDS.join(","));
+  url.searchParams.set("daily", DAILY_FIELDS.join(","));
   url.searchParams.set("forecast_days", "1");
   url.searchParams.set("timezone", "auto");
   url.searchParams.set("temperature_unit", unitSystem === "metric" ? "celsius" : "fahrenheit");

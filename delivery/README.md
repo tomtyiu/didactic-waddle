@@ -1,6 +1,6 @@
 # Delivery Notes
 
-Current focus: improve the city weather app UI so the first screen and loaded dashboard read as a polished, production-ready product while preserving the existing weather API and browser workflow.
+Current focus: fix the browser request lifecycle so rapid city searches cannot let a superseded weather request clear the active loading state or overwrite the active status message.
 
 Artifacts:
 

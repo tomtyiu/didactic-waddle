@@ -43,6 +43,7 @@ Expected health response includes `status: "ok"` and `uptimeSeconds`.
 - Check server logs for startup messages and sanitized weather lookup failures.
 - If startup prints `server_start_failed` with `EADDRINUSE`, stop the process already using the configured port or set `PORT` to an available port.
 - Check browser developer tools for failed `/api/weather` calls.
+- If users report stale status after rapid searches, reproduce with two city submissions before the first response completes and confirm the latest request owns the loading and result state.
 - Verify Open-Meteo availability if many `502` responses occur.
 - Inspect rate-limit settings if clients receive `429` responses unexpectedly.
 
