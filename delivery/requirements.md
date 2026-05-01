@@ -121,3 +121,27 @@ Acceptance criteria:
 - A regression test proves rapid consecutive searches keep the UI busy for the second request after the first is aborted.
 - The full Node test suite passes with the new frontend regression included.
 - Runtime smoke checks for `/`, `/api/health`, and `/api/weather?city=Seattle&units=imperial` pass when provider network access is available.
+
+## Maintenance Automation Requirements
+
+Request date: 2026-05-01
+
+Functional:
+
+- Provide a local security-surface scan that flags high-confidence blockers and reports review-worthy patterns such as browser HTML sinks, browser storage, environment-backed configuration, command execution paths, external scripts, dependency surface, and hardcoded secret-like values.
+- Provide a local branch hygiene check that reports current branch, upstream, ahead/behind state, local `main` freshness, untracked files, and dirty working-tree state before maintenance work or PR creation.
+- Expose both checks through `package.json` scripts and include the new scripts in `npm.cmd run check`.
+- Keep the automations read-only and dependency-free.
+
+Security and operational requirements:
+
+- Security-surface blockers must produce a non-zero exit code.
+- Review findings must be informational by default and fail only in `--strict` mode.
+- Branch hygiene must not fetch, commit, push, delete, or change branches.
+- Branch hygiene must report Git execution blockers clearly instead of producing misleading branch state.
+
+Acceptance criteria:
+
+- `npm.cmd run maintenance:security` completes with zero blockers on the current codebase.
+- `npm.cmd run maintenance:branch` reports real branch metadata when Git execution is allowed.
+- `npm.cmd run maintenance:check`, `npm.cmd run check`, and `npm.cmd test` pass.

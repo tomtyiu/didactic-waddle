@@ -74,3 +74,10 @@ Date: 2026-04-29
 - Release risk is limited to browser request state in `public/app.js`.
 - Rollback is reverting this PR or redeploying the previous commit.
 - Post-release verification should include two rapid searches, such as `Seattle` immediately followed by `Portland`, and confirm the second search owns the loading and result state.
+
+## Maintenance Automation Release Notes
+
+- No migrations, secrets, feature flags, production runtime changes, or package dependencies are required.
+- Release gates: `npm.cmd run check`, `npm.cmd test`, `npm.cmd run maintenance:security`, `npm.cmd run maintenance:branch`, and `npm.cmd run maintenance:check`.
+- Rollback is reverting the maintenance script files and `package.json` script entries.
+- Post-release verification should confirm the branch hygiene command reports the expected branch and untracked files before future PR work.

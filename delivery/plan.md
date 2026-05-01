@@ -105,3 +105,34 @@ Completion criteria:
 - A superseded request cannot re-enable controls or replace the active loading status.
 - The active request still renders the successful weather response.
 - `npm.cmd run check`, `npm.cmd test`, and local runtime smoke checks pass.
+
+## Maintenance Automation Addendum
+
+Request date: 2026-05-01
+
+Target outcome: implement recommendation 6 and 7 from the maintenance automation review: security-surface scanning and branch hygiene automation.
+
+Scope:
+
+- Add dependency-free local maintenance scripts under `scripts/`.
+- Wire the checks into `package.json`.
+- Update README and delivery docs with usage, validation, release, and rollback notes.
+
+Non-goals:
+
+- No scheduled jobs, GitHub Actions, package dependencies, network calls, or production deployment changes.
+- No automatic branch mutation, fetch, commit, push, cleanup, or destructive Git behavior.
+
+Execution steps:
+
+1. Add a read-only security-surface scanner that distinguishes blockers from review findings.
+2. Add a read-only branch hygiene reporter for Git state and untracked files.
+3. Include script syntax in `npm.cmd run check`.
+4. Validate both maintenance commands, existing tests, and whitespace.
+5. Commit, push, and open a PR if GitHub access is available.
+
+Completion criteria:
+
+- `npm.cmd run maintenance:security` reports zero blockers.
+- `npm.cmd run maintenance:branch` reports real Git metadata when Git execution is allowed.
+- `npm.cmd run maintenance:check`, `npm.cmd run check`, and `npm.cmd test` pass.
