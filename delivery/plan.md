@@ -71,3 +71,37 @@ Execution steps:
 4. Adjust frontend JavaScript only where markup and state classes require it.
 5. Run syntax checks, automated tests, and local smoke checks.
 6. Update delivery docs with validation evidence and release notes.
+
+## Frontend Request Race Debug Addendum
+
+Request date: 2026-05-01
+
+Target outcome: preserve correct UI state when a user submits a second city search before the first `/api/weather` request has completed.
+
+Scope:
+
+- Restore the latest `src/weatherService.js` main-branch regression where required forecast query parameters were changed into invalid JavaScript `#` lines.
+- Fix `public/app.js` request-controller handling.
+- Add focused regression coverage in `test/frontend.test.js`.
+- Keep the backend API contract, Open-Meteo integration, storage keys, and visual design unchanged.
+
+Non-goals:
+
+- No new browser dependencies or test frameworks.
+- No backend route or provider behavior changes.
+- No production deployment from this workspace.
+
+Execution steps:
+
+1. Reproduce the race with a pending first request and a second submitted search.
+2. Scope each abort timeout and UI update to its own `AbortController`.
+3. Prevent superseded requests from writing status or clearing busy state.
+4. Add the frontend regression test to `npm.cmd test` and `npm.cmd run check`.
+5. Re-run targeted frontend validation, full automated validation, and runtime smoke checks.
+
+Completion criteria:
+
+- `src/weatherService.js` parses and `buildForecastUrl` continues to include `current` and `daily` Open-Meteo fields.
+- A superseded request cannot re-enable controls or replace the active loading status.
+- The active request still renders the successful weather response.
+- `npm.cmd run check`, `npm.cmd test`, and local runtime smoke checks pass.

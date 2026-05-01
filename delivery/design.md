@@ -80,3 +80,28 @@ Startup fix:
 
 - `src/server.js` now uses a realpath-normalized direct-run check so `npm.cmd start` correctly starts the server from the sandboxed workspace path.
 - `test/server.test.js` covers the direct-run predicate to prevent the entrypoint from silently exiting again.
+
+## Frontend Request Lifecycle Fix
+
+Request date: 2026-05-01
+
+Root cause:
+
+- The latest `origin/main` contained two Python-style `#` lines inside `src/weatherService.js`, which made the module invalid JavaScript and removed required forecast query parameters.
+- `loadWeather` stored only the latest controller in shared state.
+- The timeout callback and `finally` block referenced shared request state instead of the request they belonged to.
+- When a second search aborted the first, the first request could still set a timeout error and call `setBusy(false)` while the second request was active.
+
+Design:
+
+- Restore `buildForecastUrl` so `current` and `daily` Open-Meteo field lists are set with valid JavaScript.
+- Create a local `AbortController` per `loadWeather` call and assign it as the active controller.
+- Bind the per-request timeout to that local controller.
+- Gate render, status, and busy-state updates with `isActiveRequest(controller)`.
+- Clear the active controller only when the completing request is still current.
+- Abort any active request before reporting invalid city input so stale responses cannot render after user correction.
+
+Security and operational impact:
+
+- No new trust boundary, dependency, secret, storage key, API route, or provider parameter was added.
+- The change reduces stale UI state without altering server-side validation or provider error handling.

@@ -12,6 +12,14 @@ Date: 2026-04-29
 - [x] Frontend assets are served by the same Node server at `/`.
 - [x] Delivery docs are current.
 
+2026-05-01 auto-debug gate results:
+
+- [x] `node --test --experimental-test-isolation=none test\frontend.test.js` passes.
+- [x] `npm.cmd run check` passes with `test/frontend.test.js` included.
+- [x] `npm.cmd test` passes with 16 tests.
+- [x] Approved live runtime smoke passes for `/`, `/api/health`, and `/api/weather?city=Seattle&units=imperial`.
+- [x] Post-rebase syntax regression in `src/weatherService.js` is fixed before release.
+
 ## Configuration and Secrets
 
 - No API key is required for Open-Meteo.
@@ -32,7 +40,9 @@ Date: 2026-04-29
 
 - Elevated 5xx rate on `/api/weather`.
 - Provider timeout causing unacceptable user-facing failures.
+- Syntax errors prevent `npm.cmd start`, `npm.cmd run check`, or weather service tests from running.
 - Frontend cannot load or submit searches.
+- Rapid consecutive searches leave controls disabled, show stale status, or render the wrong city.
 - Logs show unexpected sensitive data exposure.
 
 ## Rollback Steps
@@ -57,3 +67,10 @@ Date: 2026-04-29
 - Post-release verification should include a desktop and mobile viewport check for the search controls, loaded dashboard, and error status.
 - Manual browser verification remains required before production deployment because local browser automation was blocked or timed out in this session.
 - Local review server is currently available at `http://127.0.0.1:3101`; stop PID `14388` after review if it is no longer needed.
+
+## Frontend Request Race Release Notes
+
+- No migrations, secrets, feature flags, backend routes, or provider configuration changes are required.
+- Release risk is limited to browser request state in `public/app.js`.
+- Rollback is reverting this PR or redeploying the previous commit.
+- Post-release verification should include two rapid searches, such as `Seattle` immediately followed by `Portland`, and confirm the second search owns the loading and result state.
