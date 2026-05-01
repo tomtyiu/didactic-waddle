@@ -10,7 +10,7 @@ npm.cmd start
 
 Open `http://localhost:3001`.
 or
-http://127.0.0.1:3101
+http://127.0.0.1:3001
 
 ## Test
 
