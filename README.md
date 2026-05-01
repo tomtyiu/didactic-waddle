@@ -19,6 +19,18 @@ npm.cmd test
 npm.cmd run check
 ```
 
+## Maintenance
+
+```powershell
+npm.cmd run maintenance:security
+npm.cmd run maintenance:branch
+npm.cmd run maintenance:check
+```
+
+- `maintenance:security` scans code and configuration for high-confidence security blockers and review-worthy attack-surface changes.
+- `maintenance:branch` reports the current branch, upstream, ahead/behind state, local `main` freshness, and untracked files before starting work or opening a PR.
+- `maintenance:check` runs both maintenance checks. Use `-- --strict` with either underlying command to fail on review warnings.
+
 ## API
 
 - `GET /api/health`

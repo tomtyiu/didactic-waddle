@@ -1,6 +1,6 @@
 # Delivery Notes
 
-Current focus: fix the browser request lifecycle so rapid city searches cannot let a superseded weather request clear the active loading state or overwrite the active status message.
+Current focus: add local maintenance automations for security-surface review and branch hygiene checks without introducing runtime dependencies.
 
 Artifacts:
 

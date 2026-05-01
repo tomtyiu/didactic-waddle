@@ -105,3 +105,23 @@ Security and operational impact:
 
 - No new trust boundary, dependency, secret, storage key, API route, or provider parameter was added.
 - The change reduces stale UI state without altering server-side validation or provider error handling.
+
+## Maintenance Automation Design
+
+Request date: 2026-05-01
+
+Components:
+
+- `scripts/security-surface-scan.js`: dependency-free Node scanner for repository security-surface patterns. It fails on high-confidence blockers and reports review findings without failing by default.
+- `scripts/branch-hygiene.js`: dependency-free, read-only Git metadata reporter for branch, upstream, ahead/behind, local `main`, untracked file, and dirty worktree state.
+- `package.json`: exposes `maintenance:security`, `maintenance:branch`, and `maintenance:check`; syntax validation now includes both scripts.
+
+Failure behavior:
+
+- Security blockers fail the command; review findings are printed and can be promoted to failures with `--strict`.
+- Branch hygiene never mutates Git state. If Git cannot be executed, such as a sandbox child-process restriction, it reports the execution blocker and exits non-zero.
+
+Security and rollback:
+
+- No new package dependencies, external network calls, credentials, CI secrets, or production runtime paths are added.
+- Rollback is removing the two scripts and the related `package.json` entries.

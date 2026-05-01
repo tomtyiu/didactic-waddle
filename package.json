@@ -7,7 +7,10 @@
   "scripts": {
     "start": "node src/server.js",
     "test": "node --test --experimental-test-isolation=none test\\weatherService.test.js test\\server.test.js test\\frontend.test.js",
-    "check": "node --check src/server.js && node --check src/weatherService.js && node --check public/app.js && node --check test/weatherService.test.js && node --check test/server.test.js && node --check test/frontend.test.js"
+    "check": "node --check src/server.js && node --check src/weatherService.js && node --check public/app.js && node --check test/weatherService.test.js && node --check test/server.test.js && node --check test/frontend.test.js && node --check scripts/security-surface-scan.js && node --check scripts/branch-hygiene.js",
+    "maintenance:security": "node scripts/security-surface-scan.js",
+    "maintenance:branch": "node scripts/branch-hygiene.js",
+    "maintenance:check": "node scripts/security-surface-scan.js && node scripts/branch-hygiene.js"
   },
   "engines": {
     "node": ">=20"

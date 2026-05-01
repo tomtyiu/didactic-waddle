@@ -44,6 +44,8 @@ Expected health response includes `status: "ok"` and `uptimeSeconds`.
 - If startup prints `server_start_failed` with `EADDRINUSE`, stop the process already using the configured port or set `PORT` to an available port.
 - Check browser developer tools for failed `/api/weather` calls.
 - If users report stale status after rapid searches, reproduce with two city submissions before the first response completes and confirm the latest request owns the loading and result state.
+- Before maintenance work or PR creation, run `npm.cmd run maintenance:branch` and keep unrelated untracked files out of commits.
+- Before accepting attack-surface changes, run `npm.cmd run maintenance:security` and review any blockers or review findings.
 - Verify Open-Meteo availability if many `502` responses occur.
 - Inspect rate-limit settings if clients receive `429` responses unexpectedly.
 
@@ -62,3 +64,4 @@ Expected health response includes `status: "ok"` and `uptimeSeconds`.
 - For repeated timeouts, temporarily increase `WEATHER_TIMEOUT_MS` within operational tolerance.
 - For accidental rate-limit pressure, adjust `RATE_LIMIT_MAX` or deploy shared rate limiting for multi-instance production.
 - For application regressions, revert the PR or redeploy the previous commit.
+- For maintenance automation regressions, revert the relevant `scripts/` file and `package.json` script entry.

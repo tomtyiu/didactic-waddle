@@ -81,3 +81,17 @@ Validation limitation:
 - Browser automation through the Browser plugin was unavailable because the Node REPL execution tool was not exposed in this session.
 - A headless Edge render check was attempted with a temporary mocked weather endpoint. The first sandboxed run was blocked with `EPERM`; the escalated run timed out and was cleaned up by stopping only the identified temporary `dw-edge-*` Edge processes and matching inline Node process.
 - Because of that tooling limitation, visual browser verification should still be performed manually before production deployment.
+
+## Maintenance Automation Validation
+
+Automated checks:
+
+- `npm.cmd run check`: validates the new maintenance scripts with `node --check`.
+- `npm.cmd run maintenance:security`: must report zero blockers. Review findings are expected for known surfaces such as internal weather-icon `innerHTML`, browser local storage, environment-backed configuration, and the branch hygiene script's bounded Git command execution.
+- `npm.cmd run maintenance:branch`: must report branch, upstream, ahead/behind, local `main`, dirty worktree, and untracked file state when Git execution is allowed.
+- `npm.cmd run maintenance:check`: must run both maintenance checks.
+- `npm.cmd test`: confirms existing product behavior remains unchanged.
+
+Known validation note:
+
+- In this sandbox, branch hygiene requires elevated execution because Node child processes cannot spawn Git without `EPERM`. The script now reports that blocker instead of silently reporting false branch metadata.
